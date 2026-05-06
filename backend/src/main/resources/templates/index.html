@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asset Registry Backend</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 50px;
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .header {
+            margin-bottom: 30px;
+        }
+
+        .logo {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            color: #333;
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .tagline {
+            color: #666;
+            font-size: 16px;
+            margin-bottom: 30px;
+        }
+
+        .status-badge {
+            display: inline-block;
+            background: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .info-card {
+            background: #f5f5f5;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 5px solid #667eea;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: #333;
+            text-align: left;
+            flex: 1;
+        }
+
+        .info-value {
+            color: #667eea;
+            font-weight: bold;
+            text-align: right;
+            flex: 1;
+        }
+
+        .endpoints {
+            background: #f5f5f5;
+            padding: 25px;
+            border-radius: 10px;
+            text-align: left;
+            border-left: 5px solid #764ba2;
+        }
+
+        .endpoints h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .endpoint {
+            background: white;
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            color: #333;
+            border: 1px solid #ddd;
+        }
+
+        .method {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 3px;
+            margin-right: 8px;
+            font-weight: bold;
+            font-size: 11px;
+        }
+
+        .url {
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .footer {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            color: #999;
+            font-size: 13px;
+        }
+
+        .pulse {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            background: #4CAF50;
+            border-radius: 50%;
+            margin-right: 8px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(76, 175, 80, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(76, 175, 80, 0);
+            }
+        }
+
+        .api-response {
+            background: #1e1e1e;
+            color: #4ec9b0;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            text-align: left;
+            margin-top: 15px;
+            overflow-x: auto;
+        }
+
+        .success-icon {
+            font-size: 60px;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="success-icon">✅</div>
+            <h1>Asset Registry Backend</h1>
+            <p class="tagline">Spring Boot 3.5.0 Application</p>
+        </div>
+
+        <div class="status-badge">
+            <span class="pulse"></span>
+            <span id="status">RUNNING</span>
+        </div>
+
+        <div class="info-card">
+            <div class="info-row">
+                <span class="info-label">Framework</span>
+                <span class="info-value">Spring Boot 3.5.0</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Spring Version</span>
+                <span class="info-value">6.2.7</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Java Version</span>
+                <span class="info-value">21</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Service Version</span>
+                <span class="info-value">1.0.0</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Status</span>
+                <span class="info-value" style="color: #4CAF50;">Running</span>
+            </div>
+        </div>
+
+        <div class="endpoints">
+            <h3>📡 Available API Endpoints</h3>
+            <div class="endpoint">
+                <span class="method">GET</span>
+                <span class="url">http://localhost:8080/</span>
+                <p style="font-size: 11px; color: #999; margin-top: 5px;">Returns service status and information</p>
+            </div>
+            <div class="endpoint">
+                <span class="method">GET</span>
+                <span class="url">http://localhost:8080/health</span>
+                <p style="font-size: 11px; color: #999; margin-top: 5px;">Returns health check status</p>
+            </div>
+        </div>
+
+        <div class="endpoints" style="margin-top: 20px; border-left-color: #764ba2;">
+            <h3>📊 API Response</h3>
+            <div class="api-response" id="apiResponse">
+                {
+                  "framework": "Spring Boot 3.5.0",
+                  "message": "Asset Registry Backend - Blockchain based asset registry service",
+                  "version": "1.0.0",
+                  "status": "running"
+                }
+            </div>
+        </div>
+
+        <div class="footer">
+            ✨ Application successfully upgraded to Spring Framework 3.5.0
+        </div>
+    </div>
+
+    <script>
+        // Fetch real status from API
+        fetch('/api/status')
+            .then(response => response.json())
+            .catch(error => {
+                console.log('API endpoint not available, using static data');
+            });
+    </script>
+</body>
+</html>

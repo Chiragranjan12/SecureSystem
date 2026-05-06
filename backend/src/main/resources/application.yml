@@ -1,0 +1,30 @@
+spring:
+  application:
+    name: asset-registry-backend
+
+server:
+  port: 8443
+  servlet:
+    context-path: /
+  shutdown: immediate
+  ssl:
+    key-store: classpath:keystore.p12
+    key-store-password: changeit
+    key-store-type: PKCS12
+    key-alias: tomcat
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  level:
+    root: INFO
+    com.assetregistry: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %logger{36} - %msg%n"
