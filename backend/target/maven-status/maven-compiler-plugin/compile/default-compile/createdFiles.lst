@@ -1,0 +1,5 @@
+com\assetregistry\model\Asset.class
+com\assetregistry\controller\HealthController.class
+com\assetregistry\controller\AssetController.class
+com\assetregistry\service\AssetService.class
+com\assetregistry\AssetRegistryApplication.class

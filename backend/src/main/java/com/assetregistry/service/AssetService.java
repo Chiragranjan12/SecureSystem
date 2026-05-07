@@ -1,71 +1,82 @@
 package com.assetregistry.service;
 
-import com.assetregistry.model.Asset;
+import com.assetregistry.model.AssetRecord;
+import com.assetregistry.model.TransferEvent;
 import org.springframework.stereotype.Service;
-// import java.nio.charset.StandardCharsets;
+
 import java.security.MessageDigest;
 import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
 public class AssetService {
-    private final Map<String, Asset> assetRegistry = new HashMap<>();
+    private final Map<String, AssetRecord> assetRegistry = new HashMap<>();
     
-    public Asset uploadAsset(byte[] fileContent, String fileName, String fileType) throws Exception {
-        // Generate SHA-256 hash
+    public AssetRecord uploadAsset(byte[] fileContent, String fileName) throws Exception {
         String hash = generateSHA256Hash(fileContent);
-        
-        // Generate unique owner token (secure secret)
         String ownerToken = UUID.randomUUID().toString();
-        
-        // Create asset record
-        Asset asset = new Asset();
-        asset.setHash(hash);
-        asset.setFileName(fileName);
-        asset.setFileSize((long) fileContent.length);
-        asset.setFileType(fileType);
-        asset.setOwnerToken(ownerToken);
-        asset.setUploadedAt(LocalDateTime.now());
-        asset.setFileContent(fileContent);
-        
-        // Store in registry
-        assetRegistry.put(hash, asset);
-        
-        return asset;
-    }
-    
-    public Asset getAsset(String hash, String ownerToken) throws Exception {
-        Asset asset = assetRegistry.get(hash);
-        if (asset == null) {
-            throw new Exception("Asset not found with hash: " + hash);
-        }
-        if (!asset.getOwnerToken().equals(ownerToken)) {
-            throw new Exception("Unauthorized: Invalid owner token");
-        }
-        return asset;
-    }
-    
-    public List<Asset> getAssetsByToken(String ownerToken) {
-        List<Asset> userAssets = new ArrayList<>();
-        for (Asset asset : assetRegistry.values()) {
-            if (asset.getOwnerToken().equals(ownerToken)) {
-                userAssets.add(asset);
-            }
-        }
-        return userAssets;
+
+        AssetRecord record = new AssetRecord();
+        record.setHash(hash);
+        record.setFileName(fileName);
+        record.setOwnerToken(ownerToken);
+        record.setTimestamp(LocalDateTime.now());
+        record.setHistory(new ArrayList<>());
+        record.getHistory().add(new TransferEvent("SYSTEM", ownerToken, LocalDateTime.now()));
+
+        assetRegistry.put(hash, record);
+        return record;
     }
     
     public boolean verifyAsset(String hash, byte[] fileContent) throws Exception {
         String computedHash = generateSHA256Hash(fileContent);
-        return computedHash.equals(hash);
+        return assetRegistry.containsKey(hash) && computedHash.equals(hash);
+    }
+    
+    public List<TransferEvent> getAssetHistory(String hash) throws Exception {
+        AssetRecord record = assetRegistry.get(hash);
+        if (record == null) {
+            throw new Exception("Asset not found for hash: " + hash);
+        }
+        return new ArrayList<>(record.getHistory());
+    }
+    
+    public String transferOwnership(String hash, String currentOwnerToken, String newOwnerName) throws Exception {
+        AssetRecord record = assetRegistry.get(hash);
+        if (record == null) {
+            throw new Exception("Asset not found for hash: " + hash);
+        }
+        if (!record.getOwnerToken().equals(currentOwnerToken)) {
+            throw new Exception("Unauthorized: currentOwnerToken does not match");
+        }
+
+        TransferEvent event = new TransferEvent();
+        event.setFrom(currentOwnerToken);
+        event.setTo(newOwnerName);
+        event.setTimestamp(LocalDateTime.now());
+        record.getHistory().add(event);
+
+        String newOwnerToken = UUID.randomUUID().toString();
+        record.setOwnerToken(newOwnerToken);
+        return newOwnerToken;
+    }
+    
+    public List<AssetRecord> getAssetsByOwnerToken(String ownerToken) {
+        List<AssetRecord> assets = new ArrayList<>();
+        for (AssetRecord record : assetRegistry.values()) {
+            if (record.getOwnerToken().equals(ownerToken)) {
+                assets.add(record);
+            }
+        }
+        return assets;
     }
     
     public boolean deleteAsset(String hash, String ownerToken) throws Exception {
-        Asset asset = assetRegistry.get(hash);
-        if (asset == null) {
+        AssetRecord record = assetRegistry.get(hash);
+        if (record == null) {
             throw new Exception("Asset not found");
         }
-        if (!asset.getOwnerToken().equals(ownerToken)) {
+        if (!record.getOwnerToken().equals(ownerToken)) {
             throw new Exception("Unauthorized: Invalid owner token");
         }
         assetRegistry.remove(hash);
